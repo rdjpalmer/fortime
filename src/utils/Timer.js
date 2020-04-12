@@ -1,7 +1,18 @@
 export default class Timer {
-  constructor(startTime = 0, onUpdate = () => {}) {
+  constructor(startTime = 0, callbacks) {
+    const {
+      onStart = () => {},
+      onUpdate = () => {},
+      onStop = () => {},
+      onEnd = () => {},
+    } = callbacks;
+
     this.startTime = startTime;
+    this.onStart = onStart;
     this.onUpdate = onUpdate;
+    this.onStop = onStop;
+    this.onEnd = onEnd;
+
     this.offset = null;
     this.interval = null;
     this.recording = false;
@@ -17,6 +28,7 @@ export default class Timer {
     this.recording = true;
     this.offset = Date.now();
     this.interval = setInterval(this._update, 1000);
+    this.onStart();
     return this;
   }
 
@@ -24,6 +36,7 @@ export default class Timer {
     clearInterval(this.interval);
     this.interval = null;
     this.recording = false;
+    this.onStop();
     return this;
   }
 
@@ -36,6 +49,11 @@ export default class Timer {
     const newTime = this.startTime - this._calculateTimeOffset();
     this.startTime = newTime;
     this.onUpdate(newTime);
+
+    if (newTime <= 0) {
+      this.onEnd();
+    }
+
     return this;
   }
 

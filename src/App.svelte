@@ -6,7 +6,10 @@
 	let time = 0;
 	let counting = false;
 	let hasStarted = false;
-	let timer = new Timer(time, handleUpdate);
+	let timer = new Timer(time, {
+		onUpdate: handleUpdate,
+		onEnd: handleEnd
+	});
 
 	function handleChange(nextTime) {
 		time = nextTime;
@@ -15,6 +18,10 @@
 
 	function toggleCounting(event) {
 		event.preventDefault();
+
+		if (time < 1000) {
+			return;
+		}
 
 		counting = !counting;
 
@@ -31,6 +38,11 @@
 		time = nextTime;
 	}
 
+	function handleEnd() {
+		time = 0;
+		counting = false;
+	}
+
 	onMount(() => {
 		document.querySelector('[contenteditable]').focus();
 	});
@@ -42,10 +54,10 @@
 	<div class="input">
 		<TimeInput time={time} onChange={handleChange} editing={!counting} />
 	</div>
-	<button type="button" class="playpause" on:click={toggleCounting}>{counting ? 'Pause' : 'Play'}</button>
+	<button disabled={time < 1000} type="button" class="playpause" on:click={toggleCounting}>{counting ? 'Pause' : 'Play'}</button>
 </main>
 
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&family=Fira+Sans:wght@400;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&family=Fira+Sans:wght@500;900&display=swap" rel="stylesheet">
 
 <style>
 	:global(html) {
@@ -63,9 +75,11 @@
 	@keyframes moveBg {
 		0% {
 				background-position: 50% 0;
+				transform: translate3d(0, 0, 0) perspective(400px) rotateX(42deg) scale(2);
 		}
 		100% {
 				background-position: 50% 100%;
+				transform: translate3d(0, 0, 0) perspective(400px) rotateX(42deg) scale(2);
 		}
 	}
 
@@ -95,7 +109,7 @@
 		left: 0;
 		width: 100vw;
 		height: 100vh;
-		background: linear-gradient(180deg, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+		background: linear-gradient(180deg, rgba(0,0,0,1) 69%, rgba(0,0,0,0) 100%);
 	}
 
 	.active .floor:before {
@@ -138,7 +152,7 @@
 		mix-blend-mode: multiply;
 
 		/* Create the gradient. */
-		background-image: linear-gradient(114.5793141156962deg, rgba(6, 227, 250,1) 4.927083333333334%,rgba(229, 151, 64,1) 97.84374999999999%);;
+		background: linear-gradient(114.5793141156962deg, #0ecff8, #f64463, #fcfc27, #40F292, #0ecff8);
 
 		/* Set the background size and repeat properties. */
 		background-size: 100%;
@@ -151,28 +165,124 @@
 		filter: blur(3px);
 	}
 
+	@keyframes Gradient {
+		0% {
+			background-position:28% 0%;
+		}
+    50% {
+			background-position:73% 100%;
+		}
+    100% {
+			background-position:28% 0%;
+		}
+	}
+
 	.gradient {
-		background: linear-gradient(114.5793141156962deg, rgba(6, 227, 250,1) 4.927083333333334%,rgba(229, 151, 64,1) 97.84374999999999%);
 		position: absolute;
-		top: 0;
-		left:0;
-		width: 100%;
-		height:100%;
+		width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
 		mix-blend-mode:multiply;
 		z-index: 10;
 		pointer-events:none;
 		opacity: 0;
 		transition: opacity 150ms;
+		background: linear-gradient(114.5793141156962deg, #0ecff8, #f64463, #fcfc27, #40F292);
+		background-size: 300% 300%;
+		/* animation: Gradient 20s linear infinite; */
+		/* animation-play-state: running; */
 	}
 
 	.active .gradient {
 		opacity: 1;
+		animation-play-state: running;
 	}
 
 	.playpause {
 		position: absolute;
-		top: auto;
-		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		bottom: 21%;
 		z-index: 15;
+		background-color: transparent;
+
+		width: 108px;
+		height: 48px;
+
+		font-family: Fira Sans;
+		font-style: normal;
+		font-weight: 500;
+		font-size: 40px;
+		line-height: 0;
+		/* identical to box height */
+
+		display: flex;
+		align-items: center;
+		text-align: center;
+		justify-content: center;
+		letter-spacing: 0.11em;
+
+		color: rgba(6, 227, 250,1);
+		border: 4px solid rgba(6, 227, 250,1);
+
+		width: 190px;
+		height: 69px;
+
+		backdrop-filter: blur(4px);
+		/* Note: backdrop-filter has minimal browser support */
+
+		border-radius: 75px;
+		cursor: pointer;
+		transition: transform 150ms, opacity 150ms;
+
+		animation: playPauseWaiting 30s linear;
+		animation-iteration-count: infinite;
+	}
+
+	@keyframes playPauseWaiting {
+	0% {
+		color: #0ecff8;
+		border-color: #0ecff8;
+	}
+
+	25% {
+		color: #f64463;
+		border-color: #f64463;
+	}
+
+	50% {
+		color: #fcfc27;
+		border-color: #fcfc27;
+	}
+
+	75% {
+		color: #40F292;
+		border-color: #40F292;
+	}
+
+	100% {
+		color: #0ecff8;
+		border-color: #0ecff8;
+	}
+	}
+
+	.playpause:hover,
+	.playpause:focus {
+		transform: translateX(-50%) scale(1.1);
+	}
+
+	.playpause:active {
+		transform: translateX(-50%) scale(0.9);
+	}
+
+	.active .playpause,
+	.playpause[disabled] {
+		opacity: 0.25;
+		transition: none;
+	}
+
+	.active .playpause:hover {
+		opacity: 1;
 	}
 </style>
