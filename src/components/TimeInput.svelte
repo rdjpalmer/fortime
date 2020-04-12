@@ -4,6 +4,7 @@
   import * as eventUtils from "../utils/event";
 
   export let time = 0;
+  export let editing = false;
   export let onChange = () => {};
 
   const Numeric = /^[0-9]$/g;
@@ -78,9 +79,15 @@
   $: value = timeUtils.formatTime(time);
 </script>
 
-<div
-  contenteditable
-  on:input={handleInput}
-  on:keydown={handleKeyDown}
-  bind:innerHTML={value}
-/>
+{#if editing}
+  <div
+    contenteditable
+    on:input={handleInput}
+    on:keydown={handleKeyDown}
+    bind:innerHTML={value}
+  />
+{:else}
+  <div>
+    {value}
+  </div>
+{/if}

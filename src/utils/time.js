@@ -1,13 +1,18 @@
 export function formatTime(ms) {
-  var minutes = Math.floor(ms / 60000);
-  var seconds = ((ms % 60000) / 1000).toFixed(0);
-  return (
-    (minutes < 10 ? "0" : "") +
-    minutes +
-    ":" +
-    (seconds < 10 ? "0" : "") +
-    seconds
-  );
+  let minutes = Math.floor(ms / 60000);
+  let seconds = ((ms % 60000) / 1000).toFixed(0);
+
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  } else if (seconds === 60) {
+    seconds = "00";
+  }
+
+  return minutes + ":" + seconds;
 }
 
 export function formatToMs(time) {
