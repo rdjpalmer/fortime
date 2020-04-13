@@ -7,6 +7,7 @@
 	let counting = false;
 	let hasStarted = false;
 	let isFinishing = false;
+	let hasFinished = false;
 	let timer = new Timer(time, {
 		onUpdate: handleUpdate,
 		onEnd: handleEnd
@@ -31,6 +32,8 @@
 
 		if (!hasStarted && counting) {
 			timer.setStartTime(time).start();
+			isFinishing = false;
+			hasFinished = false;
 		} else if (counting) {
 			timer.start();
 		} else {
@@ -49,6 +52,7 @@
 	function handleEnd() {
 		time = 0;
 		counting = false;
+		hasFinished = true;
 
 		playSoundEnd();
 
@@ -79,13 +83,19 @@
 
 <main class:active={counting}>
 	<div class="floor" />
-	<div class="gradient" class:finishing={isFinishing} />
+	<div class="gradient" class:finishing={isFinishing} class:finished={hasFinished} />
 	<div class="input">
 		<TimeInput time={time} onChange={handleChange} editing={!counting} />
 	</div>
 	<button disabled={time < 1000} type="button" class="playpause" on:click={toggleCounting}>{counting ? 'Pause' : 'Play'}</button>
+	<!-- preload the audio so there isn't a delay when the countdown begins -->
 	<audio style="opacity: 0;" src={countDownSoundPath} preload="auto" />
 	<audio style="opacity: 0;" src={finishSoundPath} preload="auto" />
+	<small class="smallprint">
+		<p>
+			Made with 🍷 by <a href="https://rdjpalmer.com">Richard Palmer</a>
+		</p>
+	</small>
 </main>
 
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&family=Fira+Sans:wght@500;900&display=swap" rel="stylesheet">
@@ -98,7 +108,7 @@
 
 	:global(body) {
 		margin: 0;
-	  font-family: 'Fira Code', monospace;
+	  font-family: 'Fira Sans', Helvetica, Arial, sans-serif, monospace;
 		background-color: black;
 		overflow: hidden;
 	}
@@ -148,6 +158,7 @@
 	}
 
 	.input {
+		font-family: 'Fira Code', monospace;
 		color: black;
 		font-size: min(25vw, 50vh);
 		font-weight: 500;
@@ -167,6 +178,7 @@
 
 	.active .input:before {
 		content: attr(data-time);
+		font-family: 'Fira Code', monospace;
 		font-weight: 500;
 		position: absolute;
 		left: 0;
@@ -234,42 +246,66 @@
 		background: linear-gradient(114.5793141156962deg, #f64463, red);
 	}
 
+	@keyframes Flash {
+		0% {
+			background: linear-gradient(114.5793141156962deg, #f64463, red);
+		}
+
+		16.5% {
+			background: none;
+		}
+
+		33% {
+			background: linear-gradient(114.5793141156962deg, #f64463, red);
+		}
+
+    49.5% {
+			background: none;
+		}
+
+		66% {
+			background: linear-gradient(114.5793141156962deg, #f64463, red);
+		}
+
+		82.5% {
+			background: none;
+		}
+
+    100% {
+			background: none;
+		}
+	}
+
+	.active .gradient.finished {
+		animation: Flash 1s linear infinite;
+		animation-play-state: running;
+	}
+
 	.playpause {
-		position: absolute;
-		left: 50%;
-		transform: translateX(-50%);
-		bottom: 21%;
-		z-index: 15;
+		align-items: center;
+		backdrop-filter: blur(4px);
 		background-color: transparent;
-
-		width: 108px;
-		height: 48px;
-
+		border-radius: 75px;
+		border: 4px solid rgba(6, 227, 250,1);
+		bottom: 18%;
+		color: rgba(6, 227, 250,1);
+		cursor: pointer;
+		display: flex;
 		font-family: Fira Sans;
+		font-size: 2rem;
 		font-style: normal;
 		font-weight: 500;
-		font-size: 40px;
-		line-height: 0;
-		/* identical to box height */
-
-		display: flex;
-		align-items: center;
-		text-align: center;
+		height: 3rem;
 		justify-content: center;
+		left: 50%;
 		letter-spacing: 0.11em;
-
-		color: rgba(6, 227, 250,1);
-		border: 4px solid rgba(6, 227, 250,1);
-
-		width: 190px;
-		height: 69px;
-
-		backdrop-filter: blur(4px);
-		/* Note: backdrop-filter has minimal browser support */
-
-		border-radius: 75px;
-		cursor: pointer;
+		line-height: 0;
+		position: absolute;
+		text-align: center;
+		transform: translateX(-50%);
 		transition: transform 150ms, opacity 150ms;
+		width: 10rem;
+		z-index: 15;
 	}
 
 	.playpause:hover,
@@ -289,5 +325,32 @@
 
 	.active .playpause:hover {
 		opacity: 1;
+	}
+
+	.smallprint {
+		display: block;
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		font-size: 0.75rem;
+		z-index: 20;
+		color: white;
+		color: rgba(255, 255, 255, 0.75);
+	}
+
+	.smallprint p {
+		margin: 0;
+	}
+
+	a {
+		display: inline-block;
+		color: rgba(6, 227, 250,1);
+		text-decoration: underline;
+		transition: transform 150ms;
+		transform: scale(1);
+	}
+
+	a:hover {
+		transform: scale(0.9);
 	}
 </style>
