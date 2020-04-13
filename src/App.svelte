@@ -93,7 +93,7 @@
 	<audio style="opacity: 0;" src={finishSoundPath} preload="auto" />
 	<small class="smallprint">
 		<p>
-			Made with 🍷 by <a href="https://rdjpalmer.com">Richard Palmer</a>
+			Made with 🍷 by <a href="https://rdjpalmer.com/fortime">Richard Palmer</a>
 		</p>
 	</small>
 </main>
