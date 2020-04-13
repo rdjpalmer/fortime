@@ -51,6 +51,7 @@ export default class Timer {
     this.onUpdate(newTime);
 
     if (newTime <= 0) {
+      this.stop();
       this.onEnd();
     }
 

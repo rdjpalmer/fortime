@@ -32,7 +32,6 @@ export function replaceNextChar(editable, position, value) {
   var sel = window.getSelection();
 
   if (!sel.focusNode) {
-    console.log("nope");
     return;
   }
 
@@ -51,7 +50,6 @@ export function replacePrevChar(editable, position, value) {
   var sel = window.getSelection();
 
   if (!sel.focusNode) {
-    console.log("nope");
     return;
   }
 

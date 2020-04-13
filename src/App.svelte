@@ -6,10 +6,14 @@
 	let time = 0;
 	let counting = false;
 	let hasStarted = false;
+	let isFinishing = false;
 	let timer = new Timer(time, {
 		onUpdate: handleUpdate,
 		onEnd: handleEnd
 	});
+
+	const countDownSoundPath = "/sounds/countdown.mp3";
+	const finishSoundPath = "/sounds/end.mp3";
 
 	function handleChange(nextTime) {
 		time = nextTime;
@@ -35,26 +39,53 @@
 	}
 
 	function handleUpdate(nextTime) {
+		if (nextTime <= 10500 && nextTime > 0) {
+			playSoundSecond();
+		}
+
 		time = nextTime;
 	}
 
 	function handleEnd() {
 		time = 0;
 		counting = false;
+
+		playSoundEnd();
+
+		timer.stop();
 	}
+
+	function playSoundSecond() {
+		const audio = new Audio();
+		audio.src = countDownSoundPath;
+		audio.play();
+	}
+
+	function playSoundEnd() {
+		const audio = new Audio();
+		audio.src = finishSoundPath;
+		audio.play();
+	}
+
 
 	onMount(() => {
 		document.querySelector('[contenteditable]').focus();
 	});
+
+	$: {
+		isFinishing = time <= 10000;
+	}
 </script>
 
 <main class:active={counting}>
 	<div class="floor" />
-	<div class="gradient" />
+	<div class="gradient" class:finishing={isFinishing} />
 	<div class="input">
 		<TimeInput time={time} onChange={handleChange} editing={!counting} />
 	</div>
 	<button disabled={time < 1000} type="button" class="playpause" on:click={toggleCounting}>{counting ? 'Pause' : 'Play'}</button>
+	<audio style="opacity: 0;" src={countDownSoundPath} preload="auto" />
+	<audio style="opacity: 0;" src={finishSoundPath} preload="auto" />
 </main>
 
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&family=Fira+Sans:wght@500;900&display=swap" rel="stylesheet">
@@ -109,7 +140,7 @@
 		left: 0;
 		width: 100vw;
 		height: 100vh;
-		background: linear-gradient(180deg, rgba(0,0,0,1) 69%, rgba(0,0,0,0) 100%);
+		background: linear-gradient(180deg, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
 	}
 
 	.active .floor:before {
@@ -129,8 +160,8 @@
 		align-items: center;
 		justify-content: center;
 		z-index: 1;
-		text-shadow: 0 0 4px white;
-		filter: blur(2px) brightness(750%);
+		text-shadow: 0 0 5px white;
+		filter: blur(1px) brightness(750%);
 		caret-color: white;
 	}
 
@@ -152,7 +183,7 @@
 		mix-blend-mode: multiply;
 
 		/* Create the gradient. */
-		background: linear-gradient(114.5793141156962deg, #0ecff8, #f64463, #fcfc27, #40F292, #0ecff8);
+		background: linear-gradient(114.5793141156962deg, #0ecff8, #f64463, #40F292, #0ecff8, #f64463, #40F292);
 
 		/* Set the background size and repeat properties. */
 		background-size: 100%;
@@ -188,15 +219,19 @@
 		pointer-events:none;
 		opacity: 0;
 		transition: opacity 150ms;
-		background: linear-gradient(114.5793141156962deg, #0ecff8, #f64463, #fcfc27, #40F292);
+		background: linear-gradient(114.5793141156962deg, #0ecff8, #f64463, #40F292, #0ecff8, #f64463, #40F292);
 		background-size: 300% 300%;
-		/* animation: Gradient 20s linear infinite; */
-		/* animation-play-state: running; */
+		animation: Gradient 20s linear infinite;
+		animation-play-state: running;
 	}
 
 	.active .gradient {
 		opacity: 1;
 		animation-play-state: running;
+	}
+
+	.active .gradient.finishing {
+		background: linear-gradient(114.5793141156962deg, #f64463, red);
 	}
 
 	.playpause {
@@ -235,36 +270,6 @@
 		border-radius: 75px;
 		cursor: pointer;
 		transition: transform 150ms, opacity 150ms;
-
-		animation: playPauseWaiting 30s linear;
-		animation-iteration-count: infinite;
-	}
-
-	@keyframes playPauseWaiting {
-	0% {
-		color: #0ecff8;
-		border-color: #0ecff8;
-	}
-
-	25% {
-		color: #f64463;
-		border-color: #f64463;
-	}
-
-	50% {
-		color: #fcfc27;
-		border-color: #fcfc27;
-	}
-
-	75% {
-		color: #40F292;
-		border-color: #40F292;
-	}
-
-	100% {
-		color: #0ecff8;
-		border-color: #0ecff8;
-	}
 	}
 
 	.playpause:hover,
