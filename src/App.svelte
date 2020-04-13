@@ -176,6 +176,11 @@
 		caret-color: white;
 	}
 
+	.input > :global(*:focus) {
+		outline: 0;
+		text-shadow: 0 0 5px white, 0 0 10px #0ecff8;
+	}
+
 	.active .input:before {
 		content: attr(data-time);
 		font-family: 'Fira Code', monospace;
