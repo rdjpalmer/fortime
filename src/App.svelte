@@ -131,6 +131,7 @@
 	.input {
 		font-family: 'Fira Code', monospace;
 		color: black;
+		font-size: 30vh;
 		font-size: min(25vw, 50vh);
 		font-weight: 500;
 		position: absolute;

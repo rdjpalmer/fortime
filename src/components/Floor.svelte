@@ -3,6 +3,7 @@
   import images from "./images";
 
   let canvasElm;
+  let animationId;
   export let play = false;
 
   const ImageWidth = 3840;
@@ -30,16 +31,12 @@
       if (index === images.length) {
         index = 0;
       }
-
-      if (play) {
-        requestAnimationFrame(() => drawFloor(ctx));
-      }
     };
   }
 
   function resizeCanvasToDisplaySize(canvas) {
     const width = ImageWidth;
-    const height = document.body.clientHeight;
+    const height = ImageHeight;
 
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width;
@@ -56,10 +53,38 @@
     drawFloor(ctx);
   });
 
+  function animate() {
+    const ctx = canvasElm.getContext("2d");
+
+    now = Date.now();
+    elapsed = now - then;
+
+    if (elapsed > fpsInterval) {
+      then = now - (elapsed % fpsInterval);
+      drawFloor(ctx);
+    }
+
+    return requestAnimationFrame(animate);
+  }
+
+  let stop = false;
+  let frameCount = 0;
+  let fps, fpsInterval, startTime, now, then, elapsed;
+
+  function startAnimating(fps) {
+    fpsInterval = 1000 / fps;
+    then = Date.now();
+    startTime = then;
+
+    const ctx = canvasElm.getContext("2d");
+    return animate(ctx);
+  }
+
   $: {
     if (play) {
-      const ctx = canvasElm.getContext("2d");
-      drawFloor(ctx);
+      startAnimating(24);
+    } else if(animationId) {
+      cancelAnimationFrame(animationId);
     }
   }
 </script>
