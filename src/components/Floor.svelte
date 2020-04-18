@@ -53,9 +53,7 @@
     drawFloor(ctx);
   });
 
-  function animate() {
-    const ctx = canvasElm.getContext("2d");
-
+  function animate(ctx) {
     now = Date.now();
     elapsed = now - then;
 
@@ -64,7 +62,9 @@
       drawFloor(ctx);
     }
 
-    return requestAnimationFrame(animate);
+    if (play) {
+      requestAnimationFrame(() => animate(ctx));
+    }
   }
 
   let stop = false;
@@ -77,14 +77,12 @@
     startTime = then;
 
     const ctx = canvasElm.getContext("2d");
-    return animate(ctx);
+    animationId = animate(ctx);
   }
 
   $: {
     if (play) {
       startAnimating(24);
-    } else if(animationId) {
-      cancelAnimationFrame(animationId);
     }
   }
 </script>
