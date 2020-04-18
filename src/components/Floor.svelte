@@ -1,72 +1,78 @@
 <script>
   import { onMount } from "svelte";
-  import imageSource from "./favicon-196.png";
+  import images from "./images";
 
   let canvasElm;
+  export let play = false;
 
-  const ImageSize = 196;
-  let positionX = 0;
-  let positionY = 0;
-  let movingUp = false;
-  let movingLeft = false;
+  const ImageWidth = 3840;
+  const ImageHeight = 1080;
+  let index = 0;
 
   function drawFloor(ctx) {
     let image = new Image();
-    image.src = imageSource;
-    image.width = ImageSize;
-    image.height = ImageSize;
+    image.src = images[index];
+    image.width = ImageWidth;
+    image.height = ImageHeight;
 
     image.onload = () => {
-      ctx.drawImage(image, positionX, positionY, ImageSize, ImageSize);
+      ctx.clearRect(0, 0, canvasElm.width, canvasElm.height);
+      ctx.drawImage(
+        image,
+        0,
+        canvasElm.height - ImageHeight,
+        ImageWidth,
+        ImageHeight
+      );
 
-      console.log({ movingLeft, movingUp, positionX, positionY });
+      index = index + 2;
 
-      if (movingLeft) {
-        if (positionX === 1) {
-          movingLeft = false;
-        }
-
-        positionX -= 1;
-      } else {
-        if (positionX + ImageSize === document.body.clientWidth - 1) {
-          movingLeft = true;
-        }
-
-        positionX += 1;
+      if (index === images.length) {
+        index = 0;
       }
 
-      if (movingUp) {
-        if (positionY === 1) {
-          movingUp = false;
-        }
-
-        positionY -= 1;
-      } else {
-        if (positionY + ImageSize === document.body.clientHeight - 1) {
-          movingUp = true;
-        }
-
-        positionY += 1;
+      if (play) {
+        requestAnimationFrame(() => drawFloor(ctx));
       }
-
-      requestAnimationFrame(() => drawFloor(ctx));
     };
+  }
+
+  function resizeCanvasToDisplaySize(canvas) {
+    const width = ImageWidth;
+    const height = document.body.clientHeight;
+
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+      return true;
+    }
+
+    return false;
   }
 
   onMount(() => {
     const ctx = canvasElm.getContext("2d");
+    resizeCanvasToDisplaySize(canvasElm);
     drawFloor(ctx);
-
-    canvasElm.width = document.body.clientWidth;
-    canvasElm.height = document.body.clientHeight;
   });
+
+  $: {
+    if (play) {
+      const ctx = canvasElm.getContext("2d");
+      drawFloor(ctx);
+    }
+  }
 </script>
 
 <style>
   canvas {
-    width: 100vw;
-    height: 100vh;
-    object-fit: contain;
+    width: 100%;
+    height: 50%;
+    position: absolute;
+    bottom: 0;
+    top: auto;
+    object-fit: cover;
+    background-color: transparent;
   }
 </style>
 
