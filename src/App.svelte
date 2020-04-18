@@ -43,9 +43,7 @@
 	}
 
 	function handleUpdate(nextTime) {
-		if (nextTime < timer.startTime - 11000) {
-			isStarting = false;
-		} if (nextTime <= 10500 && nextTime > 0) {
+		if (nextTime <= 10500 && nextTime > 0) {
 			playSoundSecond();
 		}
 
@@ -81,7 +79,6 @@
 
 	$: {
 		isFinishing = time <= 10000;
-		console.log({ isFinishing });
 	}
 </script>
 
