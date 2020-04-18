@@ -2,101 +2,102 @@
 	import { onMount } from 'svelte';
 	import Timer from "./utils/Timer.js";
 	import TimeInput from "./components/TimeInput.svelte";
+	import Floor from "./components/Floor.svelte";
 
-	let time = 0;
-	let counting = false;
-	let hasStarted = false;
-	let isFinishing = false;
-	let hasFinished = false;
-	let timer = new Timer(time, {
-		onUpdate: handleUpdate,
-		onEnd: handleEnd
-	});
+	// let time = 0;
+	// let counting = false;
+	// let hasStarted = false;
+	// let isFinishing = false;
+	// let hasFinished = false;
+	// let timer = new Timer(time, {
+	// 	onUpdate: handleUpdate,
+	// 	onEnd: handleEnd
+	// });
 
-	const countDownSoundPath = "/sounds/countdown.mp3";
-	const finishSoundPath = "/sounds/end.mp3";
+	// const countDownSoundPath = "/sounds/countdown.mp3";
+	// const finishSoundPath = "/sounds/end.mp3";
 
-	function handleChange(nextTime) {
-		time = nextTime;
-		hasStarted = false;
-	}
+	// function handleChange(nextTime) {
+	// 	time = nextTime;
+	// 	hasStarted = false;
+	// }
 
-	function toggleCounting(event) {
-		event.preventDefault();
+	// function toggleCounting(event) {
+	// 	event.preventDefault();
 
-		if (time < 1000) {
-			return;
-		}
+	// 	if (time < 1000) {
+	// 		return;
+	// 	}
 
-		counting = !counting;
+	// 	counting = !counting;
 
-		if (!hasStarted && counting) {
-			timer.setStartTime(time).start();
-			isFinishing = false;
-			hasFinished = false;
-		} else if (counting) {
-			timer.start();
-		} else {
-			timer.stop();
-		}
-	}
+	// 	if (!hasStarted && counting) {
+	// 		timer.setStartTime(time).start();
+	// 		isFinishing = false;
+	// 		hasFinished = false;
+	// 	} else if (counting) {
+	// 		timer.start();
+	// 	} else {
+	// 		timer.stop();
+	// 	}
+	// }
 
-	function handleUpdate(nextTime) {
-		if (nextTime <= 10500 && nextTime > 0) {
-			playSoundSecond();
-		}
+	// function handleUpdate(nextTime) {
+	// 	if (nextTime <= 10500 && nextTime > 0) {
+	// 		playSoundSecond();
+	// 	}
 
-		time = nextTime;
-	}
+	// 	time = nextTime;
+	// }
 
-	function handleEnd() {
-		time = 0;
-		counting = false;
-		hasFinished = true;
+	// function handleEnd() {
+	// 	time = 0;
+	// 	counting = false;
+	// 	hasFinished = true;
 
-		playSoundEnd();
+	// 	playSoundEnd();
 
-		timer.stop();
-	}
+	// 	timer.stop();
+	// }
 
-	function playSoundSecond() {
-		const audio = new Audio();
-		audio.src = countDownSoundPath;
-		audio.play();
-	}
+	// function playSoundSecond() {
+	// 	const audio = new Audio();
+	// 	audio.src = countDownSoundPath;
+	// 	audio.play();
+	// }
 
-	function playSoundEnd() {
-		const audio = new Audio();
-		audio.src = finishSoundPath;
-		audio.play();
-	}
+	// function playSoundEnd() {
+	// 	const audio = new Audio();
+	// 	audio.src = finishSoundPath;
+	// 	audio.play();
+	// }
 
 
-	onMount(() => {
-		document.querySelector('[contenteditable]').focus();
-	});
+	// onMount(() => {
+	// 	document.querySelector('[contenteditable]').focus();
+	// });
 
-	$: {
-		isFinishing = time <= 10000;
-	}
+	// $: {
+	// 	isFinishing = time <= 10000;
+	// }
 </script>
 
-<main class:active={counting}>
-	<div class="floor" />
-	<div class="gradient" class:finishing={isFinishing} class:finished={hasFinished} />
+<!-- <main class:active={counting}> -->
+	<Floor />
+	<!-- <div class="gradient" class:finishing={isFinishing} class:finished={hasFinished} />
 	<div class="input">
 		<TimeInput time={time} onChange={handleChange} editing={!counting} />
 	</div>
-	<button disabled={time < 1000} type="button" class="playpause" on:click={toggleCounting}>{counting ? 'Pause' : 'Play'}</button>
+	<button disabled={time < 1000} type="button" class="playpause" on:click={toggleCounting}>{counting ? 'Pause' : 'Play'}</button> -->
 	<!-- preload the audio so there isn't a delay when the countdown begins -->
-	<audio style="opacity: 0;" src={countDownSoundPath} preload="auto" />
+	<!-- <audio style="opacity: 0;" src={countDownSoundPath} preload="auto" />
 	<audio style="opacity: 0;" src={finishSoundPath} preload="auto" />
 	<small class="smallprint">
 		<p>
 			Made with 🍷 by <a href="https://rdjpalmer.com/fortime">Richard Palmer</a>
 		</p>
-	</small>
-</main>
+	</small> -->
+<!-- </main> -->
 
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&family=Fira+Sans:wght@500;900&display=swap" rel="stylesheet">
 
@@ -108,12 +109,13 @@
 
 	:global(body) {
 		margin: 0;
+		padding: 0;
 	  font-family: 'Fira Sans', Helvetica, Arial, sans-serif, monospace;
 		background-color: black;
 		overflow: hidden;
 	}
 
-	@keyframes moveBg {
+	/* @keyframes moveBg {
 		0% {
 				background-position: 50% 0;
 				transform: translate3d(0, 0, 0) perspective(400px) rotateX(42deg) scale(2);
@@ -122,35 +124,6 @@
 				background-position: 50% 100%;
 				transform: translate3d(0, 0, 0) perspective(400px) rotateX(42deg) scale(2);
 		}
-	}
-
-	.floor:before {
-		content: "";
-		position: absolute;
-		top: auto;
-		bottom: 0;
-		left: -50vw;
-		width: 200vw;
-		height: 800px;
-		background-image: url("/images/floor.svg");
-		background-repeat: repeat;
-		background-position: center;
-		transform-origin: center bottom;
-		transform: perspective(400px) rotateX(42deg) scale(2);
-		animation: moveBg 2000ms linear;
-		animation-iteration-count: infinite;
-		animation-play-state: paused;
-	}
-
-	.floor:after {
-		content: "";
-		position: absolute;
-		top: auto;
-		bottom: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		background: linear-gradient(180deg, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
 	}
 
 	.active .floor:before {
@@ -199,15 +172,11 @@
 		font-variant-numeric: tabular-nums;
 		mix-blend-mode: multiply;
 
-		/* Create the gradient. */
 		background: linear-gradient(114.5793141156962deg, #0ecff8, #f64463, #40F292, #0ecff8, #f64463, #40F292);
 
-		/* Set the background size and repeat properties. */
 		background-size: 100%;
 		background-repeat: repeat;
 
-		/* Use the text as a mask for the background. */
-		/* This will show the gradient as a text color rather than element bg. */
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		filter: blur(3px);
@@ -249,41 +218,6 @@
 
 	.active .gradient.finishing {
 		background: linear-gradient(114.5793141156962deg, #f64463, red);
-	}
-
-	@keyframes Flash {
-		0% {
-			background: linear-gradient(114.5793141156962deg, #f64463, red);
-		}
-
-		16.5% {
-			background: none;
-		}
-
-		33% {
-			background: linear-gradient(114.5793141156962deg, #f64463, red);
-		}
-
-    49.5% {
-			background: none;
-		}
-
-		66% {
-			background: linear-gradient(114.5793141156962deg, #f64463, red);
-		}
-
-		82.5% {
-			background: none;
-		}
-
-    100% {
-			background: none;
-		}
-	}
-
-	.active .gradient.finished {
-		animation: Flash 1s linear infinite;
-		animation-play-state: running;
 	}
 
 	.playpause {
@@ -357,5 +291,5 @@
 
 	a:hover {
 		transform: scale(0.9);
-	}
+	} */
 </style>
