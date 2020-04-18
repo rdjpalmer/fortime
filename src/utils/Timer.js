@@ -8,6 +8,7 @@ export default class Timer {
     } = callbacks;
 
     this.startTime = startTime;
+    this.currentTime = startTime;
     this.onStart = onStart;
     this.onUpdate = onUpdate;
     this.onStop = onStop;
@@ -42,12 +43,13 @@ export default class Timer {
 
   setStartTime(time) {
     this.startTime = time;
+    this.currentTime = time;
     return this;
   }
 
   _update() {
-    const newTime = this.startTime - this._calculateTimeOffset();
-    this.startTime = newTime;
+    const newTime = this.currentTime - this._calculateTimeOffset();
+    this.currentTime = newTime;
     this.onUpdate(newTime);
 
     if (newTime <= 0) {

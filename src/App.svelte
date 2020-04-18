@@ -43,7 +43,9 @@
 	}
 
 	function handleUpdate(nextTime) {
-		if (nextTime <= 10500 && nextTime > 0) {
+		if (nextTime < timer.startTime - 11000) {
+			isStarting = false;
+		} if (nextTime <= 10500 && nextTime > 0) {
 			playSoundSecond();
 		}
 
@@ -74,11 +76,12 @@
 
 
 	onMount(() => {
-		// document.querySelector('[contenteditable]').focus();
+		document.querySelector('[contenteditable]').focus();
 	});
 
 	$: {
 		isFinishing = time <= 10000;
+		console.log({ isFinishing });
 	}
 </script>
 
@@ -162,6 +165,41 @@
 
 	.active .gradient.finishing {
 		background: linear-gradient(114.5793141156962deg, #f64463, red);
+	}
+
+	@keyframes Flash {
+		0% {
+			opacity: 0;
+		}
+
+		17% {
+			opacity: 1;
+		}
+
+		34% {
+			opacity: 0;
+		}
+
+		51% {
+			opacity: 1;
+		}
+
+		68% {
+			opacity: 0;
+		}
+
+		85% {
+			opacity: 1;
+		}
+
+		100% {
+			opacity: 0;
+		}
+	}
+
+	.gradient.finished {
+		background: linear-gradient(114.5793141156962deg, #f64463, red);
+		animation: Flash 1s step-end forwards;
 	}
 
 	.playpause {
