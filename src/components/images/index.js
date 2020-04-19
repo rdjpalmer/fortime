@@ -1,5 +1,4 @@
 import image00 from "./floor_00-squashed.png";
-import image00 from "./floor_00-squashed.png";
 import image01 from "./floor_01-squashed.png";
 import image02 from "./floor_02-squashed.png";
 import image03 from "./floor_03-squashed.png";
