@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import Timer from "./utils/Timer.js";
 	import TimeInput from "./components/TimeInput.svelte";
+	import Floor from "./components/Floor.svelte";
 
 	let time = 0;
 	let counting = false;
@@ -82,11 +83,14 @@
 </script>
 
 <main class:active={counting}>
-	<div class="floor" />
-	<div class="gradient" class:finishing={isFinishing} class:finished={hasFinished} />
+	<div class="block"></div>
+	<Floor play={counting} />
+	<div class="overlay" />
 	<div class="input">
 		<TimeInput time={time} onChange={handleChange} editing={!counting} />
 	</div>
+	<div class="gradient" class:finishing={isFinishing} class:finished={hasFinished} />
+
 	<button disabled={time < 1000} type="button" class="playpause" on:click={toggleCounting}>{counting ? 'Pause' : 'Play'}</button>
 	<!-- preload the audio so there isn't a delay when the countdown begins -->
 	<audio style="opacity: 0;" src={countDownSoundPath} preload="auto" />
@@ -108,58 +112,33 @@
 
 	:global(body) {
 		margin: 0;
+		padding: 0;
 	  font-family: 'Fira Sans', Helvetica, Arial, sans-serif, monospace;
-		background-color: black;
 		overflow: hidden;
 	}
 
-	@keyframes moveBg {
-		0% {
-				background-position: 50% 0;
-				transform: translate3d(0, 0, 0) perspective(400px) rotateX(42deg) scale(2);
-		}
-		100% {
-				background-position: 50% 100%;
-				transform: translate3d(0, 0, 0) perspective(400px) rotateX(42deg) scale(2);
-		}
+	.block {
+		height: 40vh;
+		background-color: black;
 	}
 
-	.floor:before {
-		content: "";
+	.overlay {
 		position: absolute;
-		top: auto;
-		bottom: 0;
-		left: -50vw;
-		width: 200vw;
-		height: 800px;
-		background-image: url("/images/floor.svg");
-		background-repeat: repeat;
-		background-position: center;
-		transform-origin: center bottom;
-		transform: perspective(400px) rotateX(42deg) scale(2);
-		animation: moveBg 2000ms linear;
-		animation-iteration-count: infinite;
-		animation-play-state: paused;
-	}
-
-	.floor:after {
-		content: "";
-		position: absolute;
-		top: auto;
-		bottom: 0;
-		left: 0;
 		width: 100vw;
 		height: 100vh;
-		background: linear-gradient(180deg, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
+		background: linear-gradient(180deg, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%);
+		top: 0;
 	}
 
-	.active .floor:before {
-		animation-play-state: running;
+	.input > :global(*:focus) {
+		outline: 0;
+		text-shadow: 0 0 5px white, 0 0 10px #0ecff8;
 	}
 
 	.input {
 		font-family: 'Fira Code', monospace;
 		color: black;
+		font-size: 30vh;
 		font-size: min(25vw, 50vh);
 		font-weight: 500;
 		position: absolute;
@@ -171,80 +150,23 @@
 		align-items: center;
 		justify-content: center;
 		z-index: 1;
-		text-shadow: 0 0 5px white;
 		filter: blur(1px) brightness(750%);
 		caret-color: white;
-	}
-
-	.input > :global(*:focus) {
-		outline: 0;
-		text-shadow: 0 0 5px white, 0 0 10px #0ecff8;
-	}
-
-	.active .input:before {
-		content: attr(data-time);
-		font-family: 'Fira Code', monospace;
-		font-weight: 500;
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		top: 0;
-		font-size: min(25vw, 50vh);
-		color: transparent;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-feature-settings: tnum;
-		font-variant-numeric: tabular-nums;
-		mix-blend-mode: multiply;
-
-		/* Create the gradient. */
-		background: linear-gradient(114.5793141156962deg, #0ecff8, #f64463, #40F292, #0ecff8, #f64463, #40F292);
-
-		/* Set the background size and repeat properties. */
-		background-size: 100%;
-		background-repeat: repeat;
-
-		/* Use the text as a mask for the background. */
-		/* This will show the gradient as a text color rather than element bg. */
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		filter: blur(3px);
-	}
-
-	@keyframes Gradient {
-		0% {
-			background-position:28% 0%;
-		}
-    50% {
-			background-position:73% 100%;
-		}
-    100% {
-			background-position:28% 0%;
-		}
+		text-shadow: 0 0 5px white;
 	}
 
 	.gradient {
 		position: absolute;
-		width: 200%;
-    height: 200%;
-    top: -50%;
-    left: -50%;
-		mix-blend-mode:multiply;
-		z-index: 10;
+		width: 100vw;
+		height: 100vh;
+		mix-blend-mode: multiply;
 		pointer-events:none;
-		opacity: 0;
-		transition: opacity 150ms;
-		background: linear-gradient(114.5793141156962deg, #0ecff8, #f64463, #40F292, #0ecff8, #f64463, #40F292);
-		background-size: 300% 300%;
-		animation: Gradient 20s linear infinite;
-		animation-play-state: running;
+		z-index: 15;
+		top: 0;
 	}
 
 	.active .gradient {
-		opacity: 1;
-		animation-play-state: running;
+		background: linear-gradient(114.5793141156962deg, #1BF5CE, #F1F51B);
 	}
 
 	.active .gradient.finishing {
@@ -253,37 +175,37 @@
 
 	@keyframes Flash {
 		0% {
-			background: linear-gradient(114.5793141156962deg, #f64463, red);
+			opacity: 0;
 		}
 
-		16.5% {
-			background: none;
+		17% {
+			opacity: 1;
 		}
 
-		33% {
-			background: linear-gradient(114.5793141156962deg, #f64463, red);
+		34% {
+			opacity: 0;
 		}
 
-    49.5% {
-			background: none;
+		51% {
+			opacity: 1;
 		}
 
-		66% {
-			background: linear-gradient(114.5793141156962deg, #f64463, red);
+		68% {
+			opacity: 0;
 		}
 
-		82.5% {
-			background: none;
+		85% {
+			opacity: 1;
 		}
 
-    100% {
-			background: none;
+		100% {
+			opacity: 0;
 		}
 	}
 
-	.active .gradient.finished {
-		animation: Flash 1s linear infinite;
-		animation-play-state: running;
+	.gradient.finished {
+		background: linear-gradient(114.5793141156962deg, #f64463, red);
+		animation: Flash 1s step-end forwards;
 	}
 
 	.playpause {
@@ -291,9 +213,9 @@
 		backdrop-filter: blur(4px);
 		background-color: transparent;
 		border-radius: 75px;
-		border: 4px solid rgba(6, 227, 250,1);
-		bottom: 18%;
-		color: rgba(6, 227, 250,1);
+		border: 4px solid #1BF5CE;
+		bottom: 20%;
+		color: #1BF5CE;
 		cursor: pointer;
 		display: flex;
 		font-family: Fira Sans;
