@@ -83,6 +83,7 @@
 </script>
 
 <main class:active={counting}>
+	<div class="block"></div>
 	<Floor play={counting} />
 	<div class="overlay" />
 	<div class="input">
@@ -116,11 +117,17 @@
 		overflow: hidden;
 	}
 
+	.block {
+		height: 40vh;
+		background-color: black;
+	}
+
 	.overlay {
 		position: absolute;
 		width: 100vw;
 		height: 100vh;
-		background: linear-gradient(180deg, rgba(0,0,0,1) 68%, rgba(0,0,0,0) 100%)
+		background: linear-gradient(180deg, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%);
+		top: 0;
 	}
 
 	.input > :global(*:focus) {
@@ -155,10 +162,11 @@
 		mix-blend-mode: multiply;
 		pointer-events:none;
 		z-index: 15;
+		top: 0;
 	}
 
 	.active .gradient {
-		background: linear-gradient(114.5793141156962deg, #40F292, #0ecff8, #f64463);
+		background: linear-gradient(114.5793141156962deg, #1BF5CE, #F1F51B);
 	}
 
 	.active .gradient.finishing {
@@ -205,9 +213,9 @@
 		backdrop-filter: blur(4px);
 		background-color: transparent;
 		border-radius: 75px;
-		border: 4px solid rgba(6, 227, 250,1);
-		bottom: 18%;
-		color: rgba(6, 227, 250,1);
+		border: 4px solid #1BF5CE;
+		bottom: 20%;
+		color: #1BF5CE;
 		cursor: pointer;
 		display: flex;
 		font-family: Fira Sans;

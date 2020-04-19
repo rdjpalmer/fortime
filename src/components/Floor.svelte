@@ -6,8 +6,8 @@
   let animationId;
   export let play = false;
 
-  const ImageWidth = 3840;
-  const ImageHeight = 1080;
+  let ImageWidth;
+  let ImageHeight;
   let index = 0;
 
   function drawFloor(ctx) {
@@ -21,12 +21,12 @@
       ctx.drawImage(
         image,
         0,
-        canvasElm.height - ImageHeight,
+        0,
         ImageWidth,
         ImageHeight
       );
 
-      index = index + 2;
+      index = index + 1;
 
       if (index === images.length) {
         index = 0;
@@ -35,21 +35,17 @@
   }
 
   function resizeCanvasToDisplaySize(canvas) {
-    const width = ImageWidth;
-    const height = ImageHeight;
-
-    if (canvas.width !== width || canvas.height !== height) {
-      canvas.width = width;
-      canvas.height = height;
-      return true;
-    }
-
-    return false;
+    canvas.width = document.querySelector('canvas').clientWidth;
+    canvas.height = document.querySelector('canvas').clientHeight;
   }
 
   onMount(() => {
     const ctx = canvasElm.getContext("2d");
     resizeCanvasToDisplaySize(canvasElm);
+
+    ImageWidth = document.querySelector('canvas').clientWidth;
+    ImageHeight =document.querySelector('canvas').clientHeight;
+    // insert the first frame
     drawFloor(ctx);
   });
 
@@ -82,19 +78,16 @@
 
   $: {
     if (play) {
-      startAnimating(24);
+      startAnimating(30);
     }
   }
 </script>
 
 <style>
   canvas {
-    width: 100%;
-    height: 50%;
-    position: absolute;
-    bottom: 0;
-    top: auto;
-    object-fit: cover;
+    width: 100vw;
+    height: 60vh;
+    object-fit: contain;
     background-color: transparent;
   }
 </style>
