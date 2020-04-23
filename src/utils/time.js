@@ -3,8 +3,6 @@ export function formatTime(ms) {
   let minutes = msAsDate.getUTCMinutes();
   let seconds = msAsDate.getUTCSeconds();
 
-  console.log({ minutes, seconds });
-
   if (minutes < 10) {
     minutes = "0" + minutes;
   }

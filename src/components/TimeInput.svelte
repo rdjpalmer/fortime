@@ -6,7 +6,6 @@
   export let time = 0;
   export let editing = false;
   export let onChange = () => {};
-  let value;
 
   const Numeric = /^[0-9]$/g;
   const Key = {
@@ -77,12 +76,7 @@
     onChange(timeUtils.formatToMs(nextValue));
   }
 
-  $: {
-    console.log({ time });
-    value = timeUtils.formatTime(time);
-
-    console.log({ value });
-  }
+  $: value = timeUtils.formatTime(time);
 </script>
 
 {#if editing}
