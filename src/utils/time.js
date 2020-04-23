@@ -1,6 +1,9 @@
 export function formatTime(ms) {
-  let minutes = Math.floor(ms / 60000);
-  let seconds = ((ms % 60000) / 1000).toFixed(0);
+  const msAsDate = new Date(1000 * Math.round(ms / 1000));
+  let minutes = msAsDate.getUTCMinutes();
+  let seconds = msAsDate.getUTCSeconds();
+
+  console.log({ minutes, seconds });
 
   if (minutes < 10) {
     minutes = "0" + minutes;
